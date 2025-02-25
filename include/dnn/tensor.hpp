@@ -32,5 +32,12 @@ class Tensor {
   // Dimensions of the tensor
   std::vector<Dimension> dimensions;
 };
+
+struct TensorHash {
+  size_t operator()(const Tensor& t) const {
+    return std::hash<std::string>()(t.getName());
+  }
+};
+
 };  // namespace DNN
 #endif

@@ -1,7 +1,7 @@
 #ifndef DNN_DAG_HPP
 #define DNN_DAG_HPP
 
-#include <map>
+#include <unordered_map>
 #include <unordered_set>
 
 #include "operator.hpp"
@@ -14,11 +14,11 @@ class DAG {
     // Collect the tensors
     for (const auto &op : operators) {
       for (const auto &input : op.getInputs()) {
-        fused[input.getName()] = false;
+        fused[input] = false;
       }
 
       for (const auto &output : op.getOutputs()) {
-        fused[output.getName()] = false;
+        fused[output] = false;
       }
     }
   }
@@ -29,8 +29,18 @@ class DAG {
   // Get the operators
   auto getOperators() const noexcept { return operators; }
 
+  // Clear the fusion status
+  void clearFusionStatus() noexcept {
+    for (auto &f : fused) {
+      f.second = false;
+    }
+    fusionEdges.clear();
+  }
+
   // Set the fusion status of a tensor
   void setTensorFusionStatus(const std::vector<bool> &fusionBit) noexcept {
+    clearFusionStatus();
+
     int i = 0;
     for (auto &f : fused) {
       f.second = fusionBit[i];
@@ -44,24 +54,22 @@ class DAG {
       for (const auto &input : op0.getInputs())
         for (const auto &op1 : operators)
           for (const auto &output : op1.getOutputs()) {
-            if (input == output)
-              edges[std::make_pair(op0.getName(), op1.getName())] = input;
+            if (input == output) edges[std::make_pair(op0, op1)] = input;
 
-            if (input == output and fused[input.getName()] == true)
-              fusionEdges[std::make_pair(op0.getName(), op1.getName())] = input;
+            if (input == output and fused[input] == true)
+              fusionEdges[std::make_pair(op0, op1)] = input;
           }
   }
 
   // Find the connected components
   auto findConnectedComponents() {
-    std::vector<std::unordered_set<std::string>> connectedComponents;
-    std::unordered_set<std::string> visited;
+    std::vector<std::unordered_set<Operator, OperatorHash>> connectedComponents;
+    std::unordered_set<Operator, OperatorHash> visited;
 
     for (const auto &op : operators) {
-      const std::string &opName = op.getName();
-      if (visited.find(opName) == visited.end()) {
-        std::unordered_set<std::string> component;
-        dfs(opName, visited, component);
+      if (visited.find(op) == visited.end()) {
+        std::unordered_set<Operator, OperatorHash> component;
+        dfs(op, visited, component);
         connectedComponents.push_back(component);
       }
     }
@@ -69,16 +77,17 @@ class DAG {
   }
 
   // Depth-first search on the fusion edges
-  void dfs(const std::string &opName, std::unordered_set<std::string> &visited,
-           std::unordered_set<std::string> &component) {
-    visited.insert(opName);
-    component.insert(opName);
+  void dfs(const Operator &op,
+           std::unordered_set<Operator, OperatorHash> &visited,
+           std::unordered_set<Operator, OperatorHash> &component) {
+    visited.insert(op);
+    component.insert(op);
 
-    for (const auto &op : operators) {
-      if (fusionEdges.find({opName, op.getName()}) != fusionEdges.end() ||
-          fusionEdges.find({op.getName(), opName}) != fusionEdges.end()) {
-        if (visited.find(op.getName()) == visited.end()) {
-          dfs(op.getName(), visited, component);
+    for (const auto &nop : operators) {
+      if (fusionEdges.find({op, nop}) != fusionEdges.end() ||
+          fusionEdges.find({nop, op}) != fusionEdges.end()) {
+        if (visited.find(nop) == visited.end()) {
+          dfs(nop, visited, component);
         }
       }
     }
@@ -89,13 +98,16 @@ class DAG {
   std::vector<Operator> operators;
 
   // Tensors fusion map
-  std::map<std::string, bool> fused;
+  std::unordered_map<Tensor, bool, TensorHash> fused;
 
   // Edges in the DAG
-  std::map<std::pair<std::string, std::string>, Tensor> edges;
+  std::unordered_map<std::pair<Operator, Operator>, Tensor, OperatorPairHash>
+      edges;
 
   // Fusion edges in the DAG
-  std::map<std::pair<std::string, std::string>, Tensor> fusionEdges;
+  std::unordered_map<std::pair<Operator, Operator>, Tensor, OperatorPairHash>
+      fusionEdges;
 };
+
 };  // namespace DNN
 #endif

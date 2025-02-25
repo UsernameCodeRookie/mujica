@@ -45,6 +45,8 @@ class Operator {
   // Get the name
   auto getName() const noexcept { return name; }
 
+  bool operator==(const Operator &other) const { return name == other.name; }
+
  private:
   // Name of the operator
   std::string name;
@@ -58,5 +60,18 @@ class Operator {
   // Reduction dimensions
   std::set<Dimension> reductDims;
 };
+
+struct OperatorHash {
+  size_t operator()(const Operator &op) const {
+    return std::hash<std::string>()(op.getName());
+  }
+};
+
+struct OperatorPairHash {
+  size_t operator()(const std::pair<Operator, Operator> &op) const {
+    return std::hash<std::string>()(op.first.getName() + op.second.getName());
+  }
+};
+
 };  // namespace DNN
 #endif

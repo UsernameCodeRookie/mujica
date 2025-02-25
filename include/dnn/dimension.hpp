@@ -2,6 +2,7 @@
 #define DNN_DIMENSION_HPP
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 namespace DNN {

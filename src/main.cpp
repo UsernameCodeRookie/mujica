@@ -21,10 +21,10 @@ int main() {
   DNN::Operator mm1("MatMul1", {tA, tV}, {tO});
 
   // Define the DAG
-  DNN::DAG operatorGraph(mm0, mm1);
+  auto operatorGraph = std::make_shared<DNN::DAG>(mm0, mm1);
 
   // Fusion space
-  FusionSpace fs(operatorGraph);
+  auto fs = std::make_shared<FusionSpace>(operatorGraph);
 
-  fs.FuseStrategy();
+  fs->FuseStrategy();
 }

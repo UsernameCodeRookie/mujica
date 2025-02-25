@@ -8,28 +8,22 @@
 
 class FusionSpace {
  public:
-  FusionSpace(DNN::DAG _operatorGraph) : operatorGraph(_operatorGraph) {}
+  FusionSpace(std::shared_ptr<DNN::DAG> _operatorGraph)
+      : operatorGraph(_operatorGraph) {}
 
   auto GenerateOperatorGroups(
-      std::vector<DNN::Operator> operators,
-      std::vector<std::unordered_set<std::string>> connected) {
+      std::vector<std::unordered_set<DNN::Operator, DNN::OperatorHash>>
+          connected) {
     std::vector<DNN::OperatorGroup> opGroups;
 
     for (const auto &con : connected) {
-      // con: std::unordered_set<std::string>
+      // con: std::unordered_set<DNN::Operator, DNN::OperatorHash>
 
       // Initialize the operator group
-      DNN::OperatorGroup opGroup;
-      for (const auto &op_name : con) {
+      DNN::OperatorGroup opGroup(operatorGraph);
+      for (const auto &op : con) {
         // Find the operator
-        auto it = std::find_if(
-            operators.begin(), operators.end(),
-            [&](const DNN::Operator &op) { return op.getName() == op_name; });
-
-        if (it == operators.end()) continue;
-
-        // Add the operator to the group
-        opGroup.AddOperator(*it);
+        opGroup.AddOperator(op);
       }
       opGroups.push_back(opGroup);
     }
@@ -41,7 +35,7 @@ class FusionSpace {
     // Randomly fuse operators
 
     // Get the number of tensors
-    int tensor_num = operatorGraph.getNumTensors();
+    int tensor_num = operatorGraph->getNumTensors();
     auto fusion_bit = std::vector<bool>(tensor_num, false);
 
     // Randomly select the tensors to fuse
@@ -51,17 +45,17 @@ class FusionSpace {
     }
 
     // Fuse the selected tensors
-    operatorGraph.setTensorFusionStatus(fusion_bit);
+    operatorGraph->setTensorFusionStatus(fusion_bit);
 
     // Get the operator groups
-    operatorGraph.connectOperators();
-    auto connected = operatorGraph.findConnectedComponents();
-    auto operators = operatorGraph.getOperators();
+    operatorGraph->connectOperators();
+    auto connected = operatorGraph->findConnectedComponents();
+    auto operators = operatorGraph->getOperators();
 
-    auto groups = GenerateOperatorGroups(operators, connected);
+    auto groups = GenerateOperatorGroups(connected);
   }
 
  private:
-  DNN::DAG operatorGraph;
+  std::shared_ptr<DNN::DAG> operatorGraph;
 };
 #endif
