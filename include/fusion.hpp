@@ -45,8 +45,9 @@ class FusionSpace {
     auto fusion_bit = std::vector<bool>(tensor_num, false);
 
     // Randomly select the tensors to fuse
+    srand(time(0));
     for (int i = 0; i < tensor_num; i++) {
-      fusion_bit[i] = rand() % 2;
+      fusion_bit[i] = static_cast<bool>(rand() % 2);
     }
 
     // Fuse the selected tensors

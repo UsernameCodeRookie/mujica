@@ -1,7 +1,6 @@
 #ifndef DNN_DAG_HPP
 #define DNN_DAG_HPP
 
-#include <iostream>
 #include <map>
 #include <unordered_set>
 

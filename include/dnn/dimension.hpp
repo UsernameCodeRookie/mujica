@@ -1,6 +1,7 @@
 #ifndef DNN_DIMENSION_HPP
 #define DNN_DIMENSION_HPP
 
+#include <iostream>
 #include <string>
 
 namespace DNN {
