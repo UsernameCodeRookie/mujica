@@ -3,9 +3,9 @@
 int main() {
   // Define the dimensions
   DNN::Dimension b("b", 1);
-  DNN::Dimension h("h", 16);
-  DNN::Dimension m("m", 64);
-  DNN::Dimension n("n", 64);
+  DNN::Dimension h("h", 12);
+  DNN::Dimension m("m", 1024);
+  DNN::Dimension n("n", 1024);
   DNN::Dimension k("k", 64);
   DNN::Dimension l("l", 64);
 
