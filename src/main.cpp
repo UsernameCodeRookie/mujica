@@ -26,5 +26,5 @@ int main() {
   // Fusion space
   auto fs = std::make_shared<FusionSpace>(operatorGraph);
 
-  fs->FuseStrategy();
+  fs->fuseStrategy();
 }

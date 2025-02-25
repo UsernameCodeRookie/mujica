@@ -11,27 +11,28 @@ class FusionSpace {
   FusionSpace(std::shared_ptr<DNN::DAG> _operatorGraph)
       : operatorGraph(_operatorGraph) {}
 
-  auto GenerateOperatorGroups(
+  auto generateOperatorGroups(
       std::vector<std::unordered_set<DNN::Operator, DNN::OperatorHash>>
           connected) {
-    std::vector<DNN::OperatorGroup> opGroups;
+    std::vector<std::shared_ptr<DNN::OperatorGroup>> opGroups;
 
     for (const auto &con : connected) {
       // con: std::unordered_set<DNN::Operator, DNN::OperatorHash>
 
       // Initialize the operator group
-      DNN::OperatorGroup opGroup(operatorGraph);
+      auto opGroup = std::make_shared<DNN::OperatorGroup>(operatorGraph);
       for (const auto &op : con) {
         // Find the operator
-        opGroup.AddOperator(op);
+        opGroup->addOperator(op);
       }
+      opGroup->construct();
       opGroups.push_back(opGroup);
     }
 
     return opGroups;
   }
 
-  void FuseStrategy() {
+  void fuseStrategy() {
     // Randomly fuse operators
 
     // Get the number of tensors
@@ -52,7 +53,7 @@ class FusionSpace {
     auto connected = operatorGraph->findConnectedComponents();
     auto operators = operatorGraph->getOperators();
 
-    auto groups = GenerateOperatorGroups(connected);
+    auto groups = generateOperatorGroups(connected);
   }
 
  private:

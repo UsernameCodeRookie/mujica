@@ -93,6 +93,15 @@ class DAG {
     }
   }
 
+  // Find the responding operator pair for a tensor
+  std::optional<const std::pair<Operator, Operator>> FindOperatorPair(
+      const Tensor &t) const noexcept {
+    for (const auto &pair : edges) {
+      if (pair.second == t) return pair.first;
+    }
+    return std::nullopt;
+  }
+
  private:
   // Operators in the DAG
   std::vector<Operator> operators;
