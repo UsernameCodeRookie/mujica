@@ -1,15 +1,18 @@
+#ifndef DNN_TENSOR_HPP
+#define DNN_TENSOR_HPP
+
 #include <string>
 #include <vector>
 
 #include "dimension.hpp"
 
+namespace DNN {
 class Tensor {
  public:
   template <typename... Dims>
-  Tensor(std::string _name, Dims... dims)
-      : name(_name), dimensions{dims...}, fused(false) {}
+  Tensor(std::string _name, Dims... dims) : name(_name), dimensions{dims...} {}
 
-  Tensor() : name("null"), dimensions{}, fused(false) {}
+  Tensor() : name("null"), dimensions{} {}
 
   // Get the name
   auto getName() const noexcept { return name; }
@@ -22,16 +25,12 @@ class Tensor {
 
   bool operator<(const Tensor& other) const { return name < other.name; }
 
-  // Set the tensor as fused
-  void setFused() noexcept { fused = true; }
-
  private:
   // Name of the tensor
   std::string name;
 
   // Dimensions of the tensor
   std::vector<Dimension> dimensions;
-
-  // Is fused
-  bool fused;
 };
+};  // namespace DNN
+#endif

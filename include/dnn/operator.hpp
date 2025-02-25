@@ -1,7 +1,11 @@
+#ifndef DNN_OPERATOR_HPP
+#define DNN_OPERATOR_HPP
+
 #include <set>
 
 #include "tensor.hpp"
 
+namespace DNN {
 class Operator {
  public:
   template <typename... InTensors, typename... OutTensors>
@@ -13,23 +17,23 @@ class Operator {
 
   // Get the reduction dimensions
   auto getReductionDimensions() const noexcept {
-    std::set<Dimension> reductDims;
+    std::set<Dimension> reduct_dimensions;
 
     for (const auto &t : inputs) {
       for (const auto &d : t.getDimensions()) {
-        reductDims.insert(d);
+        reduct_dimensions.insert(d);
       }
     }
 
     for (const auto &t : outputs) {
       for (const auto &d : t.getDimensions()) {
-        if (reductDims.find(d) != reductDims.end()) {
-          reductDims.erase(d);
+        if (reduct_dimensions.find(d) != reduct_dimensions.end()) {
+          reduct_dimensions.erase(d);
         }
       }
     }
 
-    return reductDims;
+    return reduct_dimensions;
   }
 
   // Get the inputs
@@ -54,3 +58,5 @@ class Operator {
   // Reduction dimensions
   std::set<Dimension> reductDims;
 };
+};  // namespace DNN
+#endif

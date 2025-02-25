@@ -1,5 +1,9 @@
+#ifndef DNN_DIMENSION_HPP
+#define DNN_DIMENSION_HPP
+
 #include <string>
 
+namespace DNN {
 class Dimension {
  public:
   Dimension(std::string _name, int _size) : name(_name), size(_size) {}
@@ -14,3 +18,5 @@ class Dimension {
   // Size of the dimension
   int size;
 };
+};  // namespace DNN
+#endif

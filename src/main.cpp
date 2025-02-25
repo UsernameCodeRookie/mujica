@@ -1,25 +1,30 @@
-#include "dnn/dag.hpp"
+#include "fusion.hpp"
 
 int main() {
   // Define the dimensions
-  Dimension b("b", 1);
-  Dimension h("h", 16);
-  Dimension m("m", 64);
-  Dimension n("n", 64);
-  Dimension k("k", 64);
-  Dimension l("l", 64);
+  DNN::Dimension b("b", 1);
+  DNN::Dimension h("h", 16);
+  DNN::Dimension m("m", 64);
+  DNN::Dimension n("n", 64);
+  DNN::Dimension k("k", 64);
+  DNN::Dimension l("l", 64);
 
   // Define the tensors
-  Tensor tQ("tQ", b, h, m, k);
-  Tensor tK("tK", b, h, k, n);
-  Tensor tA("tA", b, h, m, n);
-  Tensor tV("tV", b, h, n, l);
-  Tensor tO("tO", b, h, m, l);
+  DNN::Tensor tQ("tQ", b, h, m, k);
+  DNN::Tensor tK("tK", b, h, k, n);
+  DNN::Tensor tA("tA", b, h, m, n);
+  DNN::Tensor tV("tV", b, h, n, l);
+  DNN::Tensor tO("tO", b, h, m, l);
 
   // Define the operator
-  Operator mm0("MatMul0", {tQ, tK}, {tA});
-  Operator mm1("MatMul1", {tA, tV}, {tO});
+  DNN::Operator mm0("MatMul0", {tQ, tK}, {tA});
+  DNN::Operator mm1("MatMul1", {tA, tV}, {tO});
 
   // Define the DAG
-  DAG operatorGraph(mm0, mm1);
+  DNN::DAG operatorGraph(mm0, mm1);
+
+  // Fusion space
+  FusionSpace fs(operatorGraph);
+
+  fs.FuseStrategy();
 }
