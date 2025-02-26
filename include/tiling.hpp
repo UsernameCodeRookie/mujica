@@ -1,5 +1,5 @@
-#ifndef TILLING_ANALYSIS_HPP
-#define TILLING_ANALYSIS_HPP
+#ifndef TILLING_HPP
+#define TILLING_HPP
 
 #include "dnn/group.hpp"
 
