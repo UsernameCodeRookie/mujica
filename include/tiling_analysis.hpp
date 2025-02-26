@@ -10,6 +10,8 @@ class TilingAnalysis {
   void generateTilingSpace() {
     auto [operators, tensors, dimensions, internalTensors, externalTensors] =
         group->getGroupInfo();
+    // TODO: implement by SCIP to split tensor dimension to tile
+    // TODO: cost model to evaluate the tiling space
   }
 
  private:

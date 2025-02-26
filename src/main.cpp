@@ -1,6 +1,8 @@
 #include "fusion.hpp"
 
 int main() {
+  // TODO: design a better input format
+
   // Define the dimensions
   DNN::Dimension b("b", 1);
   DNN::Dimension h("h", 12);
@@ -26,5 +28,5 @@ int main() {
   // Fusion space
   auto fs = std::make_shared<FusionSpace>(operatorGraph);
 
-  fs->fuseStrategy();
+  fs->searchFusionSpace();
 }

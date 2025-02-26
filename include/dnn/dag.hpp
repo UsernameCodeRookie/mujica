@@ -10,21 +10,10 @@ namespace DNN {
 class DAG {
  public:
   template <typename... Ops>
-  DAG(Ops... _ops) : operators{_ops...} {
-    // Collect the tensors
-    for (const auto &op : operators) {
-      for (const auto &input : op.getInputs()) {
-        fused[input] = false;
-      }
-
-      for (const auto &output : op.getOutputs()) {
-        fused[output] = false;
-      }
-    }
-  }
+  DAG(Ops... _ops) : operators{_ops...} {}
 
   // Get the number of tensors
-  auto getNumTensors() const noexcept { return fused.size(); }
+  auto getNumPotentialFusionTensors() const noexcept { return fused.size(); }
 
   // Get the operators
   auto getOperators() const noexcept { return operators; }
@@ -53,12 +42,19 @@ class DAG {
     for (const auto &op0 : operators)
       for (const auto &input : op0.getInputs())
         for (const auto &op1 : operators)
-          for (const auto &output : op1.getOutputs()) {
-            if (input == output) edges[std::make_pair(op0, op1)] = input;
+          for (const auto &output : op1.getOutputs())
+            if (input == output) {
+              edges[std::make_pair(op0, op1)] = input;
+              fused[input] = false;
+            }
+  }
 
-            if (input == output and fused[input] == true)
-              fusionEdges[std::make_pair(op0, op1)] = input;
-          }
+  void connectFusionOperators() noexcept {
+    for (const auto &pair : edges) {
+      if (fused[pair.second]) {
+        fusionEdges[pair.first] = pair.second;
+      }
+    }
   }
 
   // Find the connected components
