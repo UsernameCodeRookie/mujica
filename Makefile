@@ -2,7 +2,7 @@
 CXX      := g++
 
 # Compilation Flags (modify as needed)
-CXXFLAGS := -Wall -Wextra -std=c++17 -O2
+CXXFLAGS := -Wall -Wextra -std=c++17 -O3
 LDFLAGS  := -lpthread  # Add linker flags if necessary
 
 # Directories

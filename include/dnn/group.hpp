@@ -40,10 +40,10 @@ class OperatorGroup {
 
       auto [src_op, dst_op] = *edge;
 
-      bool src_op_in_group = std::find(operators.begin(), operators.end(),
-                                       src_op) != operators.end();
-      bool dst_op_in_group = std::find(operators.begin(), operators.end(),
-                                       dst_op) != operators.end();
+      bool src_op_in_group =
+          std::count(operators.begin(), operators.end(), src_op);
+      bool dst_op_in_group =
+          std::count(operators.begin(), operators.end(), dst_op);
 
       if (src_op_in_group and dst_op_in_group) {
         internalTensors.insert(t);

@@ -1,6 +1,7 @@
 #ifndef DNN_DIMENSION_HPP
 #define DNN_DIMENSION_HPP
 
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <optional>
