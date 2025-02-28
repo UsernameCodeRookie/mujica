@@ -5,13 +5,19 @@
 
 #include "dnn/group.hpp"
 
+namespace Algorithm {
 class IIndividual {
  public:
   virtual ~IIndividual() = default;
+
   virtual int fitness() const = 0;
+
   virtual void mutate() = 0;
+
   virtual void print() const = 0;
+
   virtual std::shared_ptr<IIndividual> clone() const = 0;
+
   virtual std::shared_ptr<IIndividual> crossover(
       const std::shared_ptr<IIndividual>& other) const = 0;
 };
@@ -117,5 +123,6 @@ class GeneticAlgorithm {
   // The population
   std::vector<std::shared_ptr<IIndividual>> population;
 };
+}  // namespace Algorithm
 
 #endif

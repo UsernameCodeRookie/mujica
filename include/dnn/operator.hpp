@@ -42,6 +42,14 @@ class Operator {
   // Get the outputs
   auto getOutputs() const noexcept { return outputs; }
 
+  // Get all the tensors
+  auto getTensors() const noexcept {
+    std::vector<Tensor> tensors;
+    tensors.insert(tensors.end(), inputs.begin(), inputs.end());
+    tensors.insert(tensors.end(), outputs.begin(), outputs.end());
+    return tensors;
+  }
+
   // Get the name
   auto getName() const noexcept { return name; }
 

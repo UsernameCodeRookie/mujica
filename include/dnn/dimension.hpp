@@ -21,6 +21,9 @@ class Dimension {
   // Get the name of the dimension
   auto getName() const noexcept { return name; }
 
+  // Get the size of the dimension
+  auto getSize() const noexcept { return size; }
+
  private:
   // Name of the dimension
   std::string name;

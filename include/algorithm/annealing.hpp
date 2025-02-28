@@ -5,6 +5,7 @@
 
 #include "dnn/group.hpp"
 
+namespace Algorithm {
 class IState {
  public:
   virtual ~IState() {}
@@ -84,5 +85,6 @@ class SimulatedAnnealing {
   // Rate at which the temperature decreases
   double cooling_rate;
 };
+}  // namespace Algorithm
 
 #endif  // ANNEALING_HPP
