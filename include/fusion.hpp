@@ -44,6 +44,40 @@ class RandomSearch {
   int numIterations;
 };
 
+class TraverseSearch {
+ public:
+  TraverseSearch() = default;
+
+  auto search(const std::vector<bool> &design_space,
+              const std::function<int(std::vector<bool>)> eval) const noexcept {
+    int best_score = std::numeric_limits<int>::infinity();
+    std::vector<bool> solution;
+
+    int size = static_cast<int>(design_space.size());
+    int combinations = 1 << size;
+
+    for (int i = 0; i < combinations; i++) {
+      // Traverse the combinations
+      auto candidate = std::vector<bool>(size, false);
+
+      for (int j = 0; j < size; j++) {
+        candidate[j] = (i >> j) & 1;
+      }
+
+      // Evaluate the fusion strategy
+      auto score = eval(candidate);
+
+      // Update the best solution
+      if (score > best_score) continue;
+
+      best_score = score;
+      solution = candidate;
+    }
+
+    return solution;
+  }
+};
+
 class FusionSpace {
  public:
   FusionSpace(const std::shared_ptr<DNN::DAG> _operatorGraph)
@@ -79,8 +113,8 @@ class FusionSpace {
     int tensor_num = operatorGraph->getNumPotentialFusionTensors();
     auto fusion_bit = std::vector<bool>(tensor_num, false);
 
-    // Randomly select the tensors to fuse
-    RandomSearch rs(1);
+    // Traverse the search space
+    TraverseSearch ts;
 
     auto eval = [&](const std::vector<bool> &fusion_bit) -> int {
       // Evaluate the fusion strategy
@@ -98,7 +132,7 @@ class FusionSpace {
       return 0;
     };
 
-    auto best_solution = rs.search(fusion_bit, eval);
+    auto best_solution = ts.search(fusion_bit, eval);
   }
 
  private:

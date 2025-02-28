@@ -26,7 +26,7 @@ int main() {
   auto operatorGraph = std::make_shared<DNN::DAG>(mm0, mm1);
 
   // Fusion space
-  auto fs = std::make_shared<FusionSpace>(operatorGraph);
+  auto fs = FusionSpace(operatorGraph);
 
-  fs->searchFusionSpace();
+  fs.searchFusionSpace();
 }

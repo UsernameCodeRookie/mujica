@@ -5,11 +5,8 @@
 
 class TilingAnalysis {
  public:
-  TilingAnalysis() {}
-
-  void generateTilingSpace(
-      const std::shared_ptr<DNN::OperatorGroup> _group) noexcept {
-    group = _group;
+  TilingAnalysis(const std::shared_ptr<DNN::OperatorGroup> _group)
+      : group(_group) {
     std::tie(operators, tensors, dimensions, internalTensors, externalTensors) =
         group->getGroupInfo();
     // TODO: implement by SCIP to split tensor dimension to tile
