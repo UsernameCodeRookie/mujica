@@ -17,8 +17,7 @@ class TilingAnalysis {
   }
 
   // Calculate the traffic of the external tensor
-  int calculate_external_tensor_traffic(
-      const DNN::Tensor& tensor) const noexcept {
+  int calculateExternalTensorTraffic(const DNN::Tensor& tensor) const noexcept {
     int traffic = 1;
 
     // Calculate the size of tensor tile
@@ -48,7 +47,7 @@ class TilingAnalysis {
   }
 
   // Calculate the traffic of the operator group
-  int calculate_traffic() const noexcept {
+  int calculateTraffic() const noexcept {
     int traffic = 0;
     for (auto& op : operators) {
       // Calculate the traffic of each tensor
@@ -63,14 +62,14 @@ class TilingAnalysis {
           continue;
 
         // Calculate the traffic of each tensor if it is external
-        traffic += calculate_external_tensor_traffic(tensor);
+        traffic += calculateExternalTensorTraffic(tensor);
       }
     }
     return traffic;
   }
 
   // Calculate the footprint of the internal tensor
-  int calculate_internal_tensor_footprint(
+  int calculateInternalTensorFootprint(
       const DNN::Tensor& tensor,
       const std::unordered_set<DNN::Dimension, DNN::DimensionHash> op_dims,
       int tensor_tile_size) const noexcept {
@@ -108,7 +107,7 @@ class TilingAnalysis {
   }
 
   // Calculate the footprint of the operator group
-  int calculate_footprint() const noexcept {
+  int calculateFootprint() const noexcept {
     int footprint = 0;
     for (auto& op : operators) {
       // Collect the dimensions of the operator
@@ -140,8 +139,8 @@ class TilingAnalysis {
         auto outputs = op.getOutputs();
         if (std::count(outputs.begin(), outputs.end(), tensor)) {
           // Calculate the footprint of each tensor if it is the output tensor
-          footprint += calculate_internal_tensor_footprint(tensor, op_dims,
-                                                           tensor_tile_size);
+          footprint += calculateInternalTensorFootprint(tensor, op_dims,
+                                                        tensor_tile_size);
         }
       }
     }
