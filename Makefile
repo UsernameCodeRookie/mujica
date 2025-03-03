@@ -2,7 +2,7 @@
 CXX      := g++
 
 # Compilation Flags (modify as needed)
-CXXFLAGS := -Wall -Wextra -std=c++17 -O3
+CXXFLAGS := -Wall -Wextra -std=c++17 -O2
 LDFLAGS  := -lpthread  # Add linker flags if necessary
 
 # Directories
@@ -42,7 +42,7 @@ $(BIN_DIR)/$(TARGET): $(OBJECTS)
 -include $(DEPENDENCIES)
 
 # Special build modes
-debug: CXXFLAGS += -DDEBUG -g
+debug: CXXFLAGS += -DDEBUG -g -O0
 debug: all
 
 release: CXXFLAGS += -O3

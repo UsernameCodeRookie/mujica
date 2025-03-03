@@ -10,7 +10,7 @@ namespace Algorithm {
 class IState {
  public:
   // Take a random action and return the next state
-  virtual std::shared_ptr<IState> takeAction(bool random) const = 0;
+  virtual std::shared_ptr<IState> takeAction(bool random) = 0;
 
   // Check if all actions are expanded
   virtual bool isAllExpanded() const = 0;
@@ -20,6 +20,8 @@ class IState {
 
   // Evaluate the state
   virtual int evaluate() const = 0;
+
+  virtual void print() const = 0;
 };
 
 class Node {
@@ -104,6 +106,7 @@ class MonteCarloTreeSearch {
       // Select the child with the highest value
       node = select(node);
     }
+    return node;
   }
 
   // Default policy
