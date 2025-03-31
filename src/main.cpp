@@ -1,4 +1,5 @@
 #include "fusion.hpp"
+#include "partition.hpp"
 
 int main() {
   // TODO: design a better input format
@@ -29,4 +30,6 @@ int main() {
   auto fs = FusionSpace(operatorGraph);
 
   fs.searchFusionSpace();
+
+  auto mesh = Architecture::Mesh({2, 2}, 32);
 }
