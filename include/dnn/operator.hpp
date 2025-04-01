@@ -12,11 +12,11 @@ class Operator {
   Operator(std::string _name, std::vector<Tensor> _inputs,
            std::vector<Tensor> _outputs)
       : name(_name), inputs(_inputs), outputs(_outputs) {
-    reductDims = getReductionDimensions();
+    reductDims = setReductionDimensions();
   }
 
   // Get the reduction dimensions
-  auto getReductionDimensions() const noexcept {
+  auto setReductionDimensions() const noexcept {
     std::set<Dimension> reduct_dimensions;
 
     for (const auto &t : inputs) {
@@ -49,6 +49,9 @@ class Operator {
     tensors.insert(tensors.end(), outputs.begin(), outputs.end());
     return tensors;
   }
+
+  // Get the reduction dimensions
+  auto getReductionDimensions() const noexcept { return reductDims; }
 
   // Get the name
   auto getName() const noexcept { return name; }

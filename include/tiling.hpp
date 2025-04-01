@@ -18,14 +18,14 @@ class TilingAnalysis {
     int traffic = 1;
 
     // Calculate the size of tensor tile
-    for (auto& dim : tensor.getDimensions()) {
+    for (const auto& dim : tensor.getDimensions()) {
       traffic *= dim.getSize();
     }
 
     bool access_tensor = false;
     auto tensor_dims = tensor.getDimensions();
 
-    for (auto& dim : orderedDimensions) {
+    for (const auto& dim : orderedDimensions) {
       // From inner loop to outer loop
 
       bool dim_in_tensor =
@@ -46,9 +46,9 @@ class TilingAnalysis {
   // Calculate the traffic of the operator group
   int calculateTraffic() const noexcept {
     int traffic = 0;
-    for (auto& op : operators) {
+    for (const auto& op : operators) {
       // Calculate the traffic of each tensor
-      for (auto& tensor : op.getTensors()) {
+      for (const auto& tensor : op.getTensors()) {
         // Check if the tensor is fused, which means it is consumed by other in
         // lcoal buffer
         bool is_tensor_fused =
@@ -99,26 +99,26 @@ class TilingAnalysis {
 
       if (expand)
         // Extend the outer loops of the fused tensor
-        footprint *= tensor_tile_size / blockSize.at(dim);
+        footprint *= dim.getSize() / blockSize.at(dim);
     }
   }
 
   // Calculate the footprint of the operator group
   int calculateFootprint() const noexcept {
     int footprint = 0;
-    for (auto& op : operators) {
+    for (const auto& op : operators) {
       // Collect the dimensions of the operator
       std::unordered_set<DNN::Dimension, DNN::DimensionHash> op_dims;
 
-      for (auto& tensor : op.getTensors())
-        for (auto& dim : tensor.getDimensions()) op_dims.insert(dim);
+      for (const auto& tensor : op.getTensors())
+        for (const auto& dim : tensor.getDimensions()) op_dims.insert(dim);
 
       // Calculate the footprint of each tensor
-      for (auto& tensor : op.getTensors()) {
+      for (const auto& tensor : op.getTensors()) {
         // Calculate the size of tensor tile
         int tensor_tile_size = 1;
 
-        for (auto& dim : tensor.getDimensions()) {
+        for (const auto& dim : tensor.getDimensions()) {
           tensor_tile_size *= dim.getSize();
         }
 
