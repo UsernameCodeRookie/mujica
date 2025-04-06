@@ -5,6 +5,58 @@
 
 #include "dnn/group.hpp"
 
+/*
+TODO: Add constraint handling mechanisms to the GeneticAlgorithm framework.
+Several typical approaches include:
+
+────────────────────────────────────────────────────────
+1. Implicit Constraint Handling via Encoding
+   - Design the chromosome representation such that all individuals are
+guaranteed to be feasible;
+   - Common in continuous domain problems with bounded variables (e.g., x ∈
+[lower_bound, upper_bound]);
+   - The encoding-to-solution mapping function must always return feasible
+values;
+   - After mutation or crossover, decoded results must remain valid.
+
+────────────────────────────────────────────────────────
+2. Constraint-Preserving Crossover/Mutation Operators
+   - Design custom operators that inherently maintain feasibility after
+application;
+   - Common in permutation-based problems (e.g., TSP), using operators like
+Order Crossover (OX), Partially Mapped Crossover (PMX), etc.;
+   - Mutation can be designed as swapping two indices to preserve valid
+permutations.
+
+────────────────────────────────────────────────────────
+3. Penalty Function Method
+   - Do not restrict the generation of infeasible individuals, but penalize them
+in the fitness function;
+   - Ideal for problems with complex or multi-condition constraints;
+   - Example: fitness = objective - λ × constraint_violation;
+   - λ (penalty coefficient) must be tuned carefully:
+     - Too large → algorithm may prematurely converge to feasible local optima;
+     - Too small → algorithm may explore infeasible regions too much.
+
+────────────────────────────────────────────────────────
+4. Repair After Crossover/Mutation
+   - After applying genetic operators, check if the individual is feasible;
+   - If not, apply repair strategies (e.g., projection back, clipping to bounds,
+or reinitialization);
+   - Useful for moderately sized problems.
+
+────────────────────────────────────────────────────────
+
+Suggested Implementation Steps:
+   - [ ] Support bounds or constraint information in individual encoding.
+   - [ ] Add constraint-checking logic inside mutation/crossover functions.
+   - [ ] Optionally implement either repair-based or penalty-based strategies
+(using a strategy pattern or config enum).
+   - [ ] Add a boolean flag like `enable_constraint_check`.
+   - [ ] Track feasible solution ratio per generation as a debug/diagnostic
+metric.
+*/
+
 namespace Algorithm {
 class IIndividual {
  public:
