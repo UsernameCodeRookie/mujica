@@ -10,10 +10,7 @@ class PartitionIndividual : public Algorithm::IIndividual {
  public:
   PartitionIndividual(
       const std::vector<DNN::Dimension> _dims,
-      const std::function<
-          int(std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
-                                 DNN::DimensionHash>,
-              std::vector<DNN::Dimension>)>
+      const std::function<int(PartitionVector, std::vector<DNN::Dimension>)>
           _eval)
       : dims(_dims), evaluate(_eval) {
     randomize();
@@ -87,16 +84,10 @@ class PartitionIndividual : public Algorithm::IIndividual {
   std::vector<DNN::Dimension> dims;
 
   // Evaluation function
-  std::function<int(
-      std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
-                         DNN::DimensionHash>,
-      std::vector<DNN::Dimension>)>
-      evaluate;
+  std::function<int(PartitionVector, std::vector<DNN::Dimension>)> evaluate;
 
   // Partition vector
-  std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
-                     DNN::DimensionHash>
-      partitionVector;
+  PartitionVector partitionVector;
 
   // Ordered dimensions
   std::vector<DNN::Dimension> orderedDimensions;

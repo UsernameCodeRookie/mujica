@@ -18,6 +18,10 @@ struct Mesh {
   int offchipBandwidth;
 };
 
+using PartitionVector =
+    std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
+                       DNN::DimensionHash>;
+
 class PartitionAnalysis {
  public:
   PartitionAnalysis(const std::shared_ptr<DNN::OperatorGroup> _group,
@@ -28,16 +32,13 @@ class PartitionAnalysis {
   }
 
   // Set the partition vector of each dimension
-  void setPartitionVector(
-      const std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
-                               DNN::DimensionHash>
-          _p,
-      const std::vector<DNN::Dimension> _o) noexcept {
+  void setPartitionVector(const PartitionVector _p,
+                          const std::vector<DNN::Dimension> _o) noexcept {
     partitionVector = _p;
     orderedDimensions = _o;
   }
 
-  void evaluate() const noexcept {}
+  int evaluate() const noexcept {}
 
   // Get the tile size of each tensor
   int getTileSize(const DNN::Tensor& tensor) const noexcept {
@@ -202,14 +203,14 @@ class PartitionAnalysis {
     return volume;
   }
 
+  auto getOperatorGroup() const noexcept { return group; }
+
  private:
   // Mesh
   std::shared_ptr<Mesh> mesh;
 
   // Partition Vector
-  std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
-                     DNN::DimensionHash>
-      partitionVector;
+  PartitionVector partitionVector;
 
   // Ordered dimensions of tile loop
   std::vector<DNN::Dimension> orderedDimensions;

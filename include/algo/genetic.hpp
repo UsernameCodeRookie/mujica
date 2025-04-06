@@ -34,11 +34,12 @@ class GeneticAlgorithm {
   }
 
   // Initialize the population
-  template <typename DerivedIndividual>
-  auto initialize() noexcept {
+  template <typename DerivedIndividual, typename... Args>
+  auto initialize(Args&&... args) noexcept {
     population.clear();
     for (int i = 0; i < population_size; i++) {
-      auto individual = std::make_shared<DerivedIndividual>();
+      auto individual =
+          std::make_shared<DerivedIndividual>(std::forward<Args>(args)...);
       population.push_back(individual);
     }
   }
@@ -96,7 +97,7 @@ class GeneticAlgorithm {
 
       population = std::move(new_population);
 
-      auto best_individual =
+      best_individual =
           *std::max_element(population.begin(), population.end(), compare);
 
       best_individual->print();
@@ -122,6 +123,9 @@ class GeneticAlgorithm {
 
   // The population
   std::vector<std::shared_ptr<IIndividual>> population;
+
+  // The best individual
+  std::shared_ptr<IIndividual> best_individual;
 };
 }  // namespace Algorithm
 
