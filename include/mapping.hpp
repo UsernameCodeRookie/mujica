@@ -2,6 +2,7 @@
 #define MAPPING_HPP
 
 #include <functional>
+#include <limits>
 
 #include "algo/genetic.hpp"
 #include "partition.hpp"
@@ -11,35 +12,38 @@ class PartitionIndividual : public Algorithm::IIndividual {
   PartitionIndividual(
       const std::vector<DNN::Dimension> _dims,
       const std::function<int(PartitionVector, std::vector<DNN::Dimension>)>
-          _eval)
-      : dims(_dims), evaluate(_eval) {
+          _eval,
+      const std::function<int(PartitionVector, std::vector<DNN::Dimension>)>
+          _cons)
+      : dims(_dims), evaluate(_eval), constraint(_cons) {
     randomize();
   }
 
   void randomize() {
     // Initialize with random partition and order
-    partitionVector.clear();
-    orderedDimensions.clear();
+    p.clear();
+    o.clear();
 
     for (auto dim : dims) {
-      partitionVector[dim] =
-          std::make_tuple(rand() % 4 + 1, rand() % 4 + 1, rand() % 4 + 1);
-      orderedDimensions.push_back(dim);
+      p[dim] = std::make_tuple(rand() % 4 + 1, rand() % 4 + 1, rand() % 4 + 1);
+      o.push_back(dim);
     }
-    std::random_shuffle(orderedDimensions.begin(), orderedDimensions.end());
+    std::random_shuffle(o.begin(), o.end());
   }
 
   int fitness() const override {
-    return evaluate(partitionVector, orderedDimensions);
+    if (constraint(p, o)) return std::numeric_limits<int>::max();
+
+    return evaluate(p, o);
   }
 
   void mutate() override {
-    if (partitionVector.empty()) return;
-    auto it = partitionVector.begin();
-    std::advance(it, rand() % partitionVector.size());
+    if (p.empty()) return;
+    auto it = p.begin();
+    std::advance(it, rand() % p.size());
     int a = rand() % 4 + 1, b = rand() % 4 + 1, c = rand() % 4 + 1;
     it->second = std::make_tuple(a, b, c);
-    std::random_shuffle(orderedDimensions.begin(), orderedDimensions.end());
+    std::random_shuffle(o.begin(), o.end());
   }
 
   std::shared_ptr<IIndividual> clone() const override {
@@ -55,24 +59,22 @@ class PartitionIndividual : public Algorithm::IIndividual {
     // Uniform crossover
     for (const auto& dim : dims) {
       if (rand() % 2) {
-        child->partitionVector[dim] = this->partitionVector.at(dim);
+        child->p[dim] = this->p.at(dim);
       } else {
-        child->partitionVector[dim] = other_part->partitionVector.at(dim);
+        child->p[dim] = other_part->p.at(dim);
       }
     }
 
-    child->orderedDimensions = this->orderedDimensions;
-    if (rand() % 2)
-      std::random_shuffle(child->orderedDimensions.begin(),
-                          child->orderedDimensions.end());
+    child->o = this->o;
+    if (rand() % 2) std::random_shuffle(child->o.begin(), child->o.end());
 
     return child;
   }
 
   void print() const override {
     std::cout << "Fitness: " << fitness() << "\n";
-    for (auto dim : orderedDimensions) {
-      auto [x, y, z] = partitionVector.at(dim);
+    for (auto dim : o) {
+      auto [x, y, z] = p.at(dim);
       //   std::cout << DNN::to_string(dim) << ": (" << x << ", " << y << ", "
       //   << z
       //             << ")\n";
@@ -86,11 +88,14 @@ class PartitionIndividual : public Algorithm::IIndividual {
   // Evaluation function
   std::function<int(PartitionVector, std::vector<DNN::Dimension>)> evaluate;
 
+  // Constraint function
+  std::function<int(PartitionVector, std::vector<DNN::Dimension>)> constraint;
+
   // Partition vector
-  PartitionVector partitionVector;
+  PartitionVector p;
 
   // Ordered dimensions
-  std::vector<DNN::Dimension> orderedDimensions;
+  std::vector<DNN::Dimension> o;
 };
 
 #endif

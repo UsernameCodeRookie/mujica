@@ -21,9 +21,14 @@ class Mapper {
       return analysis->evaluate();
     };
 
+    auto cons = [&](PartitionVector p, std::vector<DNN::Dimension> o) -> bool {
+      analysis->setPartitionVector(p, o);
+      return analysis->constraint();
+    };
+
     auto ga = std::make_shared<Algorithm::GeneticAlgorithm>(30, 50, 0.3f, 0.7f);
 
-    ga->initialize<PartitionIndividual>(dims, eval);
+    ga->initialize<PartitionIndividual>(dims, eval, cons);
     ga->run();
   }
 

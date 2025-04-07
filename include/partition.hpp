@@ -24,7 +24,19 @@ class PartitionAnalysis {
     orderedDimensions = _o;
   }
 
-  int evaluate() const noexcept {}
+  int evaluate() const noexcept {
+    auto [onchip_cost, offchip_cost] = calculatePartitionTraffic();
+    int c = partitionReductionCost();
+
+    int a = std::max(onchip_cost, offchip_cost);
+    int b = std::min(onchip_cost, offchip_cost);
+    return a - b + c;
+  }
+
+  bool constraint() const noexcept {
+    int footprint = calculatePartitionFootprint();
+    return mesh->footprintPerCore > footprint;
+  }
 
   // Get the tile size of each tensor
   int getTileSize(const DNN::Tensor& tensor) const noexcept {
