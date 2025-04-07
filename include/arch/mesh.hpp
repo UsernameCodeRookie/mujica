@@ -4,30 +4,18 @@
 #include <vector>
 
 namespace Architecture {
-enum MeshType {
-  Mesh2D,
-  Mesh3D,
-  Ring,
-  Tree,
-  Hypercube,
-  Torus,
-};
+struct Mesh {
+  // Number of the core
+  int coreNum;
 
-class Mesh {
- public:
-  Mesh(const std::vector<int>& _shape, int _bandwidth)
-      : shape(_shape), bandwidth(_bandwidth) {}
+  // Footprint for one core
+  int footprintPerCore;
 
-  virtual int allGatherCost() const noexcept = 0;
+  // Bandwidth of onchip memory
+  int onchipBandwidth;
 
-  virtual int allReduceCost() const noexcept = 0;
-
- private:
-  // mesh shape
-  std::vector<int> shape;
-
-  // bandwidth
-  int bandwidth;
+  // Bandwidth of offchip memory
+  int offchipBandwidth;
 };
 }  // namespace Architecture
 

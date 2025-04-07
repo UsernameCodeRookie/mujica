@@ -7,6 +7,7 @@
 
 #include "dnn/dag.hpp"
 #include "dnn/group.hpp"
+#include "mapper.hpp"
 
 class RandomSearch {
  public:
@@ -105,7 +106,8 @@ class FusionSpace {
   }
 
   // TODO: implement the searchFusionSpace function
-  void searchFusionSpace() const noexcept {
+  void searchFusionSpace(
+      const std::shared_ptr<Architecture::Mesh> mesh) const noexcept {
     // Randomly fuse operators
 
     // Get the number of tensors
@@ -128,6 +130,11 @@ class FusionSpace {
       auto operators = operatorGraph->getOperators();
 
       auto groups = generateOperatorGroups(connected);
+
+      auto analysis = std::make_shared<PartitionAnalysis>(groups, mesh);
+      auto mapper = std::make_shared<Mapper>(analysis);
+
+      mapper->search();
 
       return 0;
     };

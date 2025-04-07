@@ -4,20 +4,6 @@
 #include "arch/mesh.hpp"
 // spatial * temporal * sharing = block num
 
-struct Mesh {
-  // Number of the core
-  int coreNum;
-
-  // Footprint for one core
-  int footprintPerCore;
-
-  // Bandwidth of onchip memory
-  int onchipBandwidth;
-
-  // Bandwidth of offchip memory
-  int offchipBandwidth;
-};
-
 using PartitionVector =
     std::unordered_map<DNN::Dimension, std::tuple<int, int, int>,
                        DNN::DimensionHash>;
@@ -25,7 +11,7 @@ using PartitionVector =
 class PartitionAnalysis {
  public:
   PartitionAnalysis(const std::shared_ptr<DNN::OperatorGroup> _group,
-                    const std::shared_ptr<Mesh> _mesh)
+                    const std::shared_ptr<Architecture::Mesh> _mesh)
       : group(_group), mesh(_mesh) {
     std::tie(operators, tensors, dimensions, internalTensors, externalTensors) =
         group->getGroupInfo();
@@ -207,7 +193,7 @@ class PartitionAnalysis {
 
  private:
   // Mesh
-  std::shared_ptr<Mesh> mesh;
+  std::shared_ptr<Architecture::Mesh> mesh;
 
   // Partition Vector
   PartitionVector partitionVector;
